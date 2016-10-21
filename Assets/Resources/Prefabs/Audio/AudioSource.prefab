@@ -126,3 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4481820982a34b45a43975ee91ccd66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MinVolume: 0.2
+  MaxVolume: 1
+  MaxVolumeConeAngle: 45
+  PanAtMaxAngle: 160

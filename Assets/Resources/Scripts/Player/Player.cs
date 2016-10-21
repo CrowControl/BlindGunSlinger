@@ -12,12 +12,14 @@ public class Player : MonoBehaviour
     //components
     private PlayerHealth health;
     private IPlayerInputManager[] _playerInput;
+    private Camera _camera;
 
     void Awake()
     {
         ApplySingleton();
         health = GetComponentInChildren<PlayerHealth>();
         _playerInput = GetComponentsInChildren<IPlayerInputManager>();
+        _camera = GetComponentInChildren<Camera>();
     }
 
     /// <summary>
@@ -30,6 +32,17 @@ public class Player : MonoBehaviour
 
         if (Instance != this)
             Destroy(gameObject);
+    }
+
+    public float GetAngleWithView(Vector3 position)
+    {
+        Transform camTrans = _camera.transform;
+
+        Vector3 camPos = camTrans.position;
+        Vector3 ToPoint = position - camPos;
+
+        Vector3 camForward = camTrans.forward;
+        return Vector3.Angle(camForward, ToPoint);
     }
 
     /// <summary>
