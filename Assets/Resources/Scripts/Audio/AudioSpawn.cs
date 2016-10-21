@@ -8,6 +8,9 @@ public class AudioSpawn : MonoBehaviour
     public float MaxVolumeConeAngle = 45;
     public float PanAtMaxAngle = 160;
 
+    public float percentage;
+    public float volume;
+
     private AudioSource _source;
 
     void Awake()
@@ -32,6 +35,14 @@ public class AudioSpawn : MonoBehaviour
         UpdateAudioPanning(angle, absAngle);
     }
 
+    //updates the volume/
+    private void Update3DVolume(float absAngle)
+    {
+        percentage = absAngle / 180;
+        volume = Mathf.Lerp(MaxVolume, MinVolume, percentage);
+        _source.volume = volume;
+    }
+
     //updates the panning.
     private void UpdateAudioPanning(float angle, float absAngle)
     {
@@ -46,19 +57,6 @@ public class AudioSpawn : MonoBehaviour
             _source.panStereo = -pan;
     }
 
-    //updates the volume
-    private void Update3DVolume(float absAngle)
-    {
-        float volume = MaxVolume;
-        if (absAngle > MaxVolumeConeAngle)
-        {
-            float lessVolumeAngle = 180 - MaxVolumeConeAngle;
-            float diff = absAngle - MaxVolumeConeAngle;
-            float percentage = diff / (lessVolumeAngle / 100);
-            volume = Mathf.Lerp(MaxVolume, MinVolume, percentage);
-        }
-        _source.volume = volume;
-    }
 
 
     public void SetClip(AudioClip clip)

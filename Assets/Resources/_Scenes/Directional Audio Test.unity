@@ -237,6 +237,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 4000013242502562, guid: 56757258bd8fa2e4fb8f6836eb301c39, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 56757258bd8fa2e4fb8f6836eb301c39, type: 2}
   m_IsPrefabParent: 0
@@ -279,6 +283,21 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 82000014138375406, guid: dd89beb5f0a687a45a962465c85f7489,
+        type: 2}
+      propertyPath: m_PlayOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 82000014138375406, guid: dd89beb5f0a687a45a962465c85f7489,
+        type: 2}
+      propertyPath: Loop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 82000014138375406, guid: dd89beb5f0a687a45a962465c85f7489,
+        type: 2}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 69f6c52679b69f24c827f27fe2bcfa5a, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dd89beb5f0a687a45a962465c85f7489, type: 2}
   m_IsPrefabParent: 0

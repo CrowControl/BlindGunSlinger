@@ -16,7 +16,7 @@ namespace Assets.Resources.Scripts.Player
         private readonly List<IObserver> _observers = new List<IObserver>();
         void Start()
         {
-            _maxHealth = Health;
+            Restart();
         }
 
         /// <summary>
