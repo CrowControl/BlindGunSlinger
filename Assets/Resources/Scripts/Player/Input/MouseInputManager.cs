@@ -153,8 +153,11 @@ namespace Assets.Scripts
 
         public void ApplyInput()
         {
-            if(_mousePressed)
+            if (_mousePressed)
+            {
+                Debug.Log("Game Starting");
                 NotifyObservers();
+            }
         }
 
         public void NotifyObservers()

@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Security.Permissions;
+using Assets.Resources.Scripts;
 using Assets.Scripts;
 using Assets.Scripts.Enemies;
 using UnityEditor;
 
-public class GameManager : MonoBehaviour, IObserver
+public class GameManager : MonoBehaviour, IObserver, IPlayerHealtObserver
 {
     //singleton
     public static GameManager Instance;
@@ -13,13 +14,23 @@ public class GameManager : MonoBehaviour, IObserver
     //other components
     public Player Player;
     private EnemyManager _enemyManager;
+
+    public string StartAudioPath = "StartSound";
+    private AudioClip _startAudio;
+
+    private float _elapsedTime;
 	// Use this for initialization
     void Start()
     {
-            ApplySingleton();
+        ApplySingleton();
         RegisterAsObserver();
         GetNecessaryComponents();
-        Restart();
+        GameOver();
+    }
+
+    void Update()
+    {
+        _elapsedTime += Time.deltaTime;
     }
 
     private void ApplySingleton()
@@ -39,26 +50,41 @@ public class GameManager : MonoBehaviour, IObserver
     private void GetNecessaryComponents()
     {
         _enemyManager = GetComponentInChildren<EnemyManager>();
+        _startAudio = SoundManager.Instance.GetRandomClip(StartAudioPath);
     }
 
     private void Restart()
     {
         Player.Reset();
-        _enemyManager.Restart();
-        //todo sound
+        SoundManager.SpawnAudioSource(_startAudio, transform.position);
+        Invoke("StartGame", _startAudio.length);
     }
 
-    public void GameOVer()
+    private void StartGame()
+    {
+        _enemyManager.Restart();
+        _elapsedTime = 0;
+    }
+
+    public void GameOver()
     {
         foreach (IObserveSubject gameOverInput in Player.SetInActive())
             gameOverInput.RegisterObserver(this);
         _enemyManager.Clear();
-        //todo sound
     }
 
     public void Notify()
     {
-        //todo
-        Debug.Log("Playr is dead");
+        Restart();
+    }
+
+    //called when the player dies.
+    public void PlayerDeathNotify()
+    {
+        Debug.Log("Player is dead");
+        int enemiesKilled = _enemyManager.EnemiesKilled;
+        float timeSurvived = _elapsedTime;
+        //todo tell the player there score.
+        GameOver();
     }
 }

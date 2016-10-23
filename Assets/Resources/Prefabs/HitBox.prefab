@@ -24,6 +24,7 @@ GameObject:
   - 23: {fileID: 23000012040590200}
   - 114: {fileID: 114000011247218196}
   - 82: {fileID: 82000010258618498}
+  - 114: {fileID: 114000013085906904}
   m_Layer: 0
   m_Name: HitBox
   m_TagString: Enemy
@@ -178,5 +179,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HealthPoints: 1
+  HitToDeathDelay: 0.2
   Damage: 1
   TimeUntilAttack: 3
+--- !u!114 &114000013085906904
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013502487220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 057f9baaa4fab8846bb4383df21ed36c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FootStepsPath: Footsteps
+  StepInterval: 0.8
+  MinVolume: 0.1
+  MaxVolume: 1

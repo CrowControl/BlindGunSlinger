@@ -6,22 +6,24 @@ using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.Enemies
 {
-    public class EnemyManager : MonoBehaviour, IObserver
+    public class EnemyManager : MonoBehaviour, EnemyDeathObserver
     {
         public float MinRespawnTime = 1;
         public float MaxRespawnTime = 5;
         public float RespawnTimeDecrement = 0.25f;
-        private float _respawnTime; 
+        private float _respawnTime;
+        private float _timeSinceSpawn;
 
         public int MinSpawnCount = 1; // How many enemies we want to spawn at a time.
         public int MaxSpawnCount = 8;
         public int AmountEnemiesKilledToIncreaseSpawnCount = 5;
-        private int _spawnCount;
+        [SerializeField] private int _spawnCount;
 
         public int HealthPoints = 1;
 
         private Spawner[] _enemySpawners; //the enemy spawners.
-        private int _enemiesKilled;
+        public int EnemiesKilled { get; private set; }
+        [SerializeField] private int EnemiesSpawned;
 
         private const string EnemyTag = "Enemy";
         
@@ -32,14 +34,22 @@ namespace Assets.Scripts.Enemies
             _enemySpawners = GetSpawnersWithTag(EnemyTag);
         }
 
+        void Update()
+        {
+            _timeSinceSpawn += Time.deltaTime;
+        }
+
         public void Restart()
         {
+            //remove all enemies from the field.
             Clear();
 
-            _enemiesKilled = 0;
+            //set values back to original state.
+            EnemiesKilled = 0;
             _respawnTime = MaxRespawnTime;
             _spawnCount = MinSpawnCount;
 
+            //start spawning.
             ScheduledSpawn();
         }
 
@@ -81,6 +91,10 @@ namespace Assets.Scripts.Enemies
             HitBoxController hbController = obj.GetComponent<HitBoxController>();
             hbController.RegisterObserver(this);
 
+            //data tracking.
+            EnemiesSpawned++;
+            _timeSinceSpawn = 0;
+
             return obj;
         }
 
@@ -106,6 +120,10 @@ namespace Assets.Scripts.Enemies
             for (int i = 0; i < count; i++)
             {
                 int index = GetFreeSpawnerIndex();
+                //when we can spawn no more enemies.
+                if (index == -1)
+                    return objects;
+
                 objects[i] = SpecificSpawn(index);
             }
             return objects;
@@ -117,7 +135,7 @@ namespace Assets.Scripts.Enemies
         /// <returns>random index of a free spawner.</returns>
         private int GetFreeSpawnerIndex()
         {
-            List<int> freeIndices = new List<int>();
+            List<int> freeIndices = new List<int> {-1};
             //find all free spawners.
             for (int index = 0; index < _enemySpawners.Length; index++)
             {
@@ -125,8 +143,6 @@ namespace Assets.Scripts.Enemies
                     freeIndices.Add(index);
             }
 
-            if(freeIndices.Count <= 0)
-                Debug.Log("all enemiesspawns full, no new enemy can be added.");
             //choose one.
             int choice = Random.Range(0, freeIndices.Count - 1);
             return freeIndices[choice];
@@ -148,7 +164,14 @@ namespace Assets.Scripts.Enemies
         /// </summary>
         public void Notify()
         {
-            IncreaseEnemyKilled();
+            throw new NotImplementedException();
+        }
+
+        public void EnemyDestroyNotify(bool killed)
+        {
+            EnemiesSpawned--;
+            if(killed)
+                IncreaseEnemyKilled();
         }
 
         /// <summary>
@@ -157,11 +180,11 @@ namespace Assets.Scripts.Enemies
         /// <param name="amount">amount of enemies that have been killed. default 1.</param>
         private void IncreaseEnemyKilled(int amount = 1)
         {
-            _enemiesKilled += amount;
+            EnemiesKilled += amount;
             _respawnTime -= RespawnTimeDecrement;
             _respawnTime = Math.Max(_respawnTime, MinRespawnTime);
 
-            if (_enemiesKilled%AmountEnemiesKilledToIncreaseSpawnCount != 0) return;
+            if (EnemiesKilled % AmountEnemiesKilledToIncreaseSpawnCount != 0) return;
             _spawnCount++;
             _spawnCount = Math.Min(_spawnCount, MaxSpawnCount);
         }

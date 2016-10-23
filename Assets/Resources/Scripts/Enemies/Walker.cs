@@ -6,23 +6,30 @@ using UnityEditor;
 
 public class Walker : MonoBehaviour
 {
-    public string FootStepsPath = "Footsteps";
-    public float StepInterval = .8f;
-    public float MinVolume = .1f, MaxVolume = 1;
-    private SoundClipChooser _footSteps;
+    //footsteps.
+    public string FootStepsPath = "Footsteps";      //path at Resources/Audio Clips/ where the footstep audio clips are found.
+    public float StepInterval = .8f;                //time between footsteps.
+    public float MinVolume = .1f, MaxVolume = 1;    //min and max volumes of the footsteps.
+    private SoundClipChooser _footSteps;            //Chooses random footsteps.
 
-    private float _totalTime;
-    private float _elapsedTime;
+    //time
+    private float _totalTime;                       //total time of the object this is attached to before the object expires.
+    private float _elapsedTime;                     //time elapsed since start.
+
 	// Use this for initialization
 	void Start ()
 	{
+        //Get necessary components
 	    _totalTime = GetComponent<HitBoxController>().TimeUntilAttack;
 	    _footSteps = SoundManager.Instance.GetClipChooser(FootStepsPath);
+
+        //Start spawning foots
         Invoke("SpawnFootStep", StepInterval);
 	}
 
     void Update()
     {
+        //update the time.
         _elapsedTime += Time.deltaTime;
     }
 

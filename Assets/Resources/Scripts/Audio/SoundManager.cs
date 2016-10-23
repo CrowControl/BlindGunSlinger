@@ -78,7 +78,7 @@ namespace Assets.Resources.Scripts
                 _clipCollections[path] = new SoundClipChooser(PathBase + path);
         }
 
-        public static AudioSpawn SpawnAudioSource(AudioClip clip, Vector3 pos)
+        public static AudioSpawn SpawnAudioSource(AudioClip clip, Vector3 pos, float delay = 0)
         {
             //spawn the audiosource prefab
             GameObject prefab = Instance.AudioSourcePrefab;
@@ -86,7 +86,7 @@ namespace Assets.Resources.Scripts
 
             //set the clip.
             AudioSpawn spawn = obj.GetComponent<AudioSpawn>();
-            spawn.SetClip(clip);
+            spawn.SetClipAndPlay(clip, delay);
 
             return spawn;
         }
@@ -123,11 +123,6 @@ namespace Assets.Resources.Scripts
             //save choice for next time, and return.
             _lastIndex = index;
             return _clips[index];
-        }
-
-        public AudioClip[] GetAllClips()
-        {
-            return _clips;
         }
     }
 }

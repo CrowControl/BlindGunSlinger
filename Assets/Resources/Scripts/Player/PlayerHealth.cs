@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts;
 using UnityEngine;
 
@@ -7,11 +8,11 @@ namespace Assets.Resources.Scripts.Player
     public class PlayerHealth : MonoBehaviour, IObserveSubject
     {
         public int Health;
+        public int MaxHealth = 3;
         public AudioClip[] HealthLevelAudioClips;
 
         //singleton
         public static PlayerHealth Instance;
-        private int _maxHealth;
 
         private readonly List<IObserver> _observers = new List<IObserver>();
         void Start()
@@ -52,15 +53,15 @@ namespace Assets.Resources.Scripts.Player
 
         public void Restart()
         {
-            Health = _maxHealth;
+            Health = MaxHealth;
             UpdateHealthAudio();
         }
 
         #region Observer
         public void NotifyObservers()
         {
-            foreach(IObserver observer in _observers)
-                observer.Notify();
+            foreach (IPlayerHealtObserver healtObserver in _observers.OfType<IPlayerHealtObserver>())
+                healtObserver.PlayerDeathNotify();
         }
 
         public void RegisterObserver(IObserver observer)

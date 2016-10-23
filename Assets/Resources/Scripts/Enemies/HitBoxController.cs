@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Assets.Resources.Scripts;
 using Assets.Resources.Scripts.Player;
@@ -10,9 +11,11 @@ namespace Assets.Scripts.Enemies
     {
         //health
         public int HealthPoints = 1;
+        public float HitToDeathDelay = .2f;
 
         //damage
         public int Damage = 1;
+        private bool _isKilled;
 
         //time until attack
         public float TimeUntilAttack = 3;
@@ -25,6 +28,7 @@ namespace Assets.Scripts.Enemies
         //spawn and attack.
         private AudioClip _spawnAudioClip;
         private AudioClip _attackAudioClip;
+        private AudioClip _deathAudioClip;
 
         //other components
         private Player _player;
@@ -32,7 +36,8 @@ namespace Assets.Scripts.Enemies
         //observer
         private List<IObserver> _observers;
 
-        #region Awake
+        private readonly List<AudioSpawn> _audioSpawns = new List<AudioSpawn>(); 
+
         void Awake()
         {
             _observers = new List<IObserver>();
@@ -41,6 +46,7 @@ namespace Assets.Scripts.Enemies
             PlaySpawnClip();
         }
 
+        #region Audio
         /// <summary>
         /// Initializes all the soundclips for this object.
         /// </summary>
@@ -49,8 +55,14 @@ namespace Assets.Scripts.Enemies
             SoundManager sound = SoundManager.Instance;
 
             _spawnAudioClip = sound.GetRandomClip("Shotgun Clicks");
-            _hitGrunts = sound.GetRandomClips("Enemy Grunts", HealthPoints);
             _attackAudioClip = sound.GetRandomClip("Shotgun Shots");
+            _deathAudioClip = sound.GetRandomClip("Deathsounds");
+        }
+
+        private void SpawnAudioClip(AudioClip clip, float delay = 0)
+        {
+            AudioSpawn spawn = SoundManager.SpawnAudioSource(clip, transform.position, delay);
+            _audioSpawns.Add(spawn);
         }
 
         /// <summary>
@@ -58,7 +70,7 @@ namespace Assets.Scripts.Enemies
         /// </summary>
         private void PlaySpawnClip()
         {
-            SoundManager.SpawnAudioSource(_spawnAudioClip, transform.position);
+            SpawnAudioClip(_spawnAudioClip);
         }
         #endregion
 
@@ -74,7 +86,8 @@ namespace Assets.Scripts.Enemies
         /// </summary>
         protected virtual void Attack()
         {
-            SoundManager.SpawnAudioSource(_attackAudioClip, transform.position);
+            //spawn sound
+            SpawnAudioClip(_attackAudioClip);
 
             //apply damage to player
             _player.ApplyDamage(Damage);
@@ -89,9 +102,6 @@ namespace Assets.Scripts.Enemies
         /// </summary>
         public virtual void GetHit()
         {
-            //play a hit sound.
-            PlayHitGrunt();
-        
             //if health reaches 0, we die. But we wat until the hitgrunt is finished playing.
             HealthPoints--;
             if (HealthPoints <= 0)
@@ -109,16 +119,26 @@ namespace Assets.Scripts.Enemies
 
             //choose grunt and play.
             AudioClip grunt = _hitGrunts[_curGruntIndex];
-            SoundManager.SpawnAudioSource(grunt, transform.position);
+            SpawnAudioClip(grunt);
 
             //set index for next time.
             _curGruntIndex++;
         }
 
+        /// <summary>
+        /// cancel all still running audio clips.
+        /// </summary>
+        private void CancelAudioClips()
+        {
+            foreach (AudioSpawn spawn in _audioSpawns.Where(spawn => spawn != null))
+                spawn.Cancel();
+        }
+
         protected virtual void Die()
         {
-            Debug.Log("Enemy Died");
-            //todo dying sound.
+            CancelAudioClips();
+            SpawnAudioClip(_deathAudioClip, HitToDeathDelay);
+            _isKilled = true;
             Destroy();
         }
 
@@ -133,8 +153,8 @@ namespace Assets.Scripts.Enemies
         #region Observer
         public void NotifyObservers()
         {
-            foreach (IObserver observer in _observers)
-                observer.Notify();
+            foreach (EnemyDeathObserver obs in _observers.OfType<EnemyDeathObserver>())
+                obs.EnemyDestroyNotify(_isKilled);
         }
 
         public void RegisterObserver(IObserver observer)
