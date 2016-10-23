@@ -98,7 +98,7 @@ namespace Assets.Resources.Scripts
     public class SoundClipChooser
     {
         private readonly AudioClip[] _clips;    //the clips
-        private int _lastIndex;                 //Index of the last clip we returned.
+        private int _previousIndex;                 //Index of the last clip we returned.
         public SoundClipChooser(AudioClip[] clips)
         {
             _clips = clips;
@@ -115,13 +115,19 @@ namespace Assets.Resources.Scripts
         /// <returns>A random clip from this choosers'collections</returns>
         public AudioClip GetRandomClip()
         {
-            //choose a clip, not same as last.
-            int index = _lastIndex;
-            while (index == _lastIndex)
-                index = Random.Range(0, _clips.Length);
+            //choose a random clip.
+            int lastIndex = _clips.Length - 1;
+            int index = Random.Range(0, lastIndex);
+
+            //if it's the same as last time, take the next one.
+            if (index == _previousIndex)
+                index++;
+            //if that's out of bounds, loop back to zero.
+            if (index > lastIndex)
+                index = 0;
 
             //save choice for next time, and return.
-            _lastIndex = index;
+            _previousIndex = index;
             return _clips[index];
         }
     }
