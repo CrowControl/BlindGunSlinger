@@ -9,38 +9,52 @@ namespace Assets.Resources.Scripts.Player.Input
 {
     public class ViveInputManager : MonoBehaviour, IPlayerInputManager
     {
+        //states.
         private PlayingViveController _playingController;
         private GameOverViveController _gameOverController;
 
+        //active state
         private ViveController _activeController;
 
         void Awake()
         {
+            //get components.
             Shooter shooter = GetComponentInParent<Shooter>();
             SteamVR_TrackedObject trackedObj = GetComponent<SteamVR_TrackedObject>();
             
+            //initialize states.
             _playingController = new PlayingViveController(trackedObj, shooter, transform);
             _gameOverController = new GameOverViveController(trackedObj);
 
+            //set current state.
             _activeController = _playingController;
         }
 
         void Update()
         {
+            //read input of current state.
             _activeController.ReadInput();
         }
 
         void FixedUpdate()
         {
+            //apply input of current state.
             _activeController.ApplyInput();
         }
 
-       
+
+        /// <summary>
+        /// Set state to Playing.
+        /// </summary>
         public void SetPlaying()
         {
             _activeController = _playingController;
         }
 
+        /// <summary>
+        /// Set state to non-playing.
+        /// </summary>
+        /// <returns>Game over input controller, to be observed by game manager.</returns>
         public IObserveSubject SetNonPlaying()
         {
             _activeController = _gameOverController;
@@ -60,11 +74,11 @@ namespace Assets.Resources.Scripts.Player.Input
                 return device;
             }
         }
-
         private bool ControllerInitialized
         {
             get { return Controller != null; }
         }
+
         //input data.   
         protected bool IsTriggerDown;
 
@@ -79,43 +93,45 @@ namespace Assets.Resources.Scripts.Player.Input
             _trackedObj = obj;
         }
 
+        /// <summary>
+        /// Read all necessary input.
+        /// </summary>
         public void ReadInput()
         {
-            bool initialized = ControllerInitialized;
+            //controller can not be initialized when it leaves the Vive Tower area.
             IsTriggerDown = ControllerInitialized && Controller.GetPressDown(TriggerButtonId);
         }
 
+        /// <summary>
+        /// Apply all input.
+        /// </summary>
         public abstract void ApplyInput();
-    }
-
-    public class EmptyController : ViveController
-    {
-        public EmptyController(SteamVR_TrackedObject obj) : base(obj)
-        {
-        }
-
-        public override void ApplyInput()
-        {
-            
-        }
     }
 
     public class PlayingViveController : ViveController
     {
+        //components.
         private readonly Shooter _shooter;
         private readonly Transform _transform;
+
         public PlayingViveController(SteamVR_TrackedObject obj, Shooter shooter, Transform transform) : base(obj)
         {
             _shooter = shooter;
             _transform = transform;
         }
 
+        /// <summary>
+        /// apply all input.
+        /// </summary>
         public override void ApplyInput()
         {
             if (IsTriggerDown)
                 Shoot();
         }
 
+        /// <summary>
+        /// Shoot your gun.
+        /// </summary>
         private void Shoot()
         {
             Debug.Log("Shot is fired.");
@@ -130,10 +146,15 @@ namespace Assets.Resources.Scripts.Player.Input
         private readonly List<IObserver> _observers = new List<IObserver>(); 
         public GameOverViveController(SteamVR_TrackedObject obj) : base(obj)
         {
+            //empty constructor, only used to pass parameters to the base class.
         }
 
+        /// <summary>
+        /// Apply all input.
+        /// </summary>
         public override void ApplyInput()
         {
+            //if the trigger is pulled, we let the observers know.
             if(IsTriggerDown)
                 NotifyObservers();
         }

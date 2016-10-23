@@ -14,6 +14,8 @@ namespace Assets.Scripts.Enemies
         private float _respawnTime;
         private float _timeSinceSpawn;
 
+        public float StartSpawningAfter = 5;
+
         public int MinSpawnCount = 1; // How many enemies we want to spawn at a time.
         public int MaxSpawnCount = 8;
         public int AmountEnemiesKilledToIncreaseSpawnCount = 5;
@@ -50,7 +52,7 @@ namespace Assets.Scripts.Enemies
             _spawnCount = MinSpawnCount;
 
             //start spawning.
-            ScheduledSpawn();
+            Invoke("ScheduledSpawn", StartSpawningAfter);
         }
 
         #region Spawning

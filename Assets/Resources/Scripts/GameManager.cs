@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour, IObserver, IPlayerHealtObserver
     {
         Player.Reset();
         SoundManager.SpawnAudioSource(_startAudio, transform.position);
-        Invoke("StartGame", _startAudio.length);
+        StartGame();
     }
 
     private void StartGame()
