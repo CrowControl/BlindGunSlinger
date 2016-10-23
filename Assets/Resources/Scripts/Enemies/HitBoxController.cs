@@ -32,11 +32,6 @@ namespace Assets.Scripts.Enemies
         //observer
         private List<IObserver> _observers;
 
-        public HitBoxController(Player player)
-        {
-            _player = player;
-        }
-
         #region Awake
         void Awake()
         {

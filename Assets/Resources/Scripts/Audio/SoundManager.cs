@@ -63,10 +63,10 @@ namespace Assets.Resources.Scripts
         /// </summary>
         /// <param name="path">path to get clips from</param>
         /// <returns>all clips found at path.s</returns>
-        public AudioClip[] GetAllClips(string path)
+        public SoundClipChooser GetClipChooser(string path)
         {
             CheckSoundChooser(path);
-            return _clipCollections[path].GetAllClips();
+            return _clipCollections[path];
         }
 
         /// <summary>
@@ -78,12 +78,17 @@ namespace Assets.Resources.Scripts
                 _clipCollections[path] = new SoundClipChooser(PathBase + path);
         }
 
-        public static void SpawnAudioSource(AudioClip clip, Vector3 pos)
+        public static AudioSpawn SpawnAudioSource(AudioClip clip, Vector3 pos)
         {
+            //spawn the audiosource prefab
             GameObject prefab = Instance.AudioSourcePrefab;
-            //spawn the audiosource prefab and pass it the clip.
             GameObject obj = Instantiate(prefab, pos, Quaternion.identity) as GameObject;
-            obj.GetComponent<AudioSpawn>().SetClip(clip);
+
+            //set the clip.
+            AudioSpawn spawn = obj.GetComponent<AudioSpawn>();
+            spawn.SetClip(clip);
+
+            return spawn;
         }
     }
 

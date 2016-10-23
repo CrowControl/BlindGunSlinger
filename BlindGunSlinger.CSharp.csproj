@@ -67,6 +67,7 @@
     <Compile Include="Assets\Resources\Scripts\Audio\SoundManager.cs" />
     <Compile Include="Assets\Resources\Scripts\Enemies\EnemyManager.cs" />
     <Compile Include="Assets\Resources\Scripts\Enemies\HitBoxController.cs" />
+    <Compile Include="Assets\Resources\Scripts\Enemies\Walker.cs" />
     <Compile Include="Assets\Resources\Scripts\GameManager.cs" />
     <Compile Include="Assets\Resources\Scripts\Player\Input\Input Interfaces.cs" />
     <Compile Include="Assets\Resources\Scripts\Player\Input\MouseInputManager.cs" />

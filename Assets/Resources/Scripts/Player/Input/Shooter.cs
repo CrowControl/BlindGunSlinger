@@ -9,12 +9,15 @@ namespace Assets.Resources.Scripts.Player.Input
         private const string RevolverPath = "Revolver Shots";
         void Start()
         {
-            AudioClip[] revolverShots = SoundManager.Instance.GetAllClips(RevolverPath);
-            _clipChooser = new SoundClipChooser(revolverShots);
+            //load sounds.
+            _clipChooser = SoundManager.Instance.GetClipChooser(RevolverPath);
         }
 
         public void Shoot(Ray ray)
         {
+            //play sound
+            PlayShotSound();
+
             //Cast the ray, it should hit something.
             RaycastHit hit;
             if (!Physics.Raycast(ray, out hit)) return;
@@ -22,10 +25,7 @@ namespace Assets.Resources.Scripts.Player.Input
             //the collider the ray hit should be an enemy.
             Collider other = hit.collider;
             if (other.tag != "Enemy") return;
-
-            //play the sound
-            PlayShotSound();
-
+            
             //let the enemy know it got hit.
             HitBoxController enemy = other.GetComponent<HitBoxController>();
             enemy.GetHit();

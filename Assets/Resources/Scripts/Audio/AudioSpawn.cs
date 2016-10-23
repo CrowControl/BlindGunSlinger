@@ -8,8 +8,10 @@ public class AudioSpawn : MonoBehaviour
     public float MaxVolumeConeAngle = 45;
     public float PanAtMaxAngle = 160;
 
-    public float percentage;
-    public float volume;
+    public float Percentage;
+    public float Volume;
+
+    public float VolumeFactor = 1;
 
     private AudioSource _source;
 
@@ -38,9 +40,9 @@ public class AudioSpawn : MonoBehaviour
     //updates the volume/
     private void Update3DVolume(float absAngle)
     {
-        percentage = absAngle / 180;
-        volume = Mathf.Lerp(MaxVolume, MinVolume, percentage);
-        _source.volume = volume;
+        Percentage = absAngle / 180;
+        Volume = Mathf.Lerp(MaxVolume, MinVolume, Percentage);
+        _source.volume = Volume * VolumeFactor;
     }
 
     //updates the panning.
@@ -62,8 +64,8 @@ public class AudioSpawn : MonoBehaviour
     public void SetClip(AudioClip clip)
     {
         //play the clip.
-        _source.clip = clip;
         Update3DSettings();
+        _source.clip = clip;
         _source.Play();
 
         //delete this object after we're finished.
