@@ -21,9 +21,13 @@ public class GameManager : MonoBehaviour, IObserver, IPlayerHealtObserver
 
     private float _elapsedTime;
 	// Use this for initialization
-    void Start()
+    void Awake()
     {
         ApplySingleton();
+    }
+
+    void Start()
+    {
         RegisterAsObserver();
         GetNecessaryComponents();
         GameOver();
