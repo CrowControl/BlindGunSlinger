@@ -14,9 +14,13 @@ namespace Assets.Resources.Scripts.Player
         //singleton
         public static PlayerHealth Instance;
 
+        public string DeathAudioPath = "EndSound";
+        private AudioClip _deathClip;
+
         private readonly List<IObserver> _observers = new List<IObserver>();
         void Start()
         {
+            _deathClip = SoundManager.Instance.GetRandomClip(DeathAudioPath);
             Restart();
         }
 
@@ -47,7 +51,7 @@ namespace Assets.Resources.Scripts.Player
 
         private void Die()
         {
-            //todo play dying sound
+            SoundManager.SpawnAudioSource(_deathClip, transform.position);
             NotifyObservers();
         }
 

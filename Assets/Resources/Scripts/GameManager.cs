@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Security.Permissions;
 using Assets.Resources.Scripts;
+using Assets.Resources.Scripts.Player;
 using Assets.Scripts;
 using Assets.Scripts.Enemies;
 using UnityEditor;
@@ -57,7 +58,7 @@ public class GameManager : MonoBehaviour, IObserver, IPlayerHealtObserver
     {
         Player.Reset();
         SoundManager.SpawnAudioSource(_startAudio, transform.position);
-        StartGame();
+        StartGame();    
     }
 
     private void StartGame()

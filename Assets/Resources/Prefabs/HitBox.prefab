@@ -121,4 +121,4 @@ MonoBehaviour:
   FootStepsPath: Footsteps
   StepInterval: 0.4
   MinVolume: 0.1
-  MaxVolume: 1
+  MaxVolume: 0.8

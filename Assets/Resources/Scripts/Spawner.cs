@@ -7,7 +7,7 @@ public class Spawner : MonoBehaviour, IObserver
 {
     public GameObject SpawnObject;
     public bool IsFree { get { return _spawnee == null; } }
-    private GameObject _spawnee;
+    [SerializeField] private GameObject _spawnee;
     void Start()
     {
         Clear();
@@ -44,6 +44,7 @@ public class Spawner : MonoBehaviour, IObserver
 
     public void Clear()
     {
+        Destroy(_spawnee);
         _spawnee = null;
     }
 

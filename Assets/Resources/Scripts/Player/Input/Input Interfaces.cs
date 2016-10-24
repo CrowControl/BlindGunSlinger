@@ -6,10 +6,10 @@ using Assets.Scripts;
 
 namespace Assets.Resources.Scripts.Player.Input
 {
-    interface IPlayerInputManager
+    public interface IPlayerInputManager
     {
         void SetPlaying();
-        IObserveSubject SetNonPlaying();
+        IObserveSubject SetNonPlaying();    
     }
 
     public interface IPlayerInputController

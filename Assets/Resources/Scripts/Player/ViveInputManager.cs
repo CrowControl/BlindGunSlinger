@@ -25,9 +25,11 @@ namespace Assets.Resources.Scripts.Player.Input
             //initialize states.
             _playingController = new PlayingViveController(trackedObj, shooter, transform);
             _gameOverController = new GameOverViveController(trackedObj);
+            _gameOverController.RegisterObserver(GameManager.Instance);
+            GetComponentInParent<Player>().PlayerInput.Add(this);
 
             //set current state.
-            _activeController = _playingController;
+            _activeController = _gameOverController;
         }
 
         void Update()
@@ -155,8 +157,11 @@ namespace Assets.Resources.Scripts.Player.Input
         public override void ApplyInput()
         {
             //if the trigger is pulled, we let the observers know.
-            if(IsTriggerDown)
+            if (IsTriggerDown)
+            {
                 NotifyObservers();
+                IsTriggerDown = false;
+            }
         }
 
         public void NotifyObservers()

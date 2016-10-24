@@ -28,6 +28,7 @@ namespace Assets.Scripts.Enemies
         [SerializeField] private int EnemiesSpawned;
 
         private const string EnemyTag = "Enemy";
+        private bool _isSpawning;
         
         // Use this for initialization
         void Awake()
@@ -51,6 +52,7 @@ namespace Assets.Scripts.Enemies
             _respawnTime = MaxRespawnTime;
             _spawnCount = MinSpawnCount;
 
+            _isSpawning = true;
             //start spawning.
             Invoke("ScheduledSpawn", StartSpawningAfter);
         }
@@ -58,6 +60,7 @@ namespace Assets.Scripts.Enemies
         #region Spawning
         private void ScheduledSpawn()
         {
+            if (!_isSpawning) return;
             RandomSpawn();
             //schedule next.
             Invoke("ScheduledSpawn", _respawnTime);
@@ -76,7 +79,7 @@ namespace Assets.Scripts.Enemies
 
 
         /// <summary>
-        /// Spawns this.SpawnAtATime mount of objects,starting with the spawner at spawnerIndex in the Spawnerlist 
+        /// Spawns this SpawnAtATime mount of objects,starting with the spawner at spawnerIndex in the Spawnerlist 
         /// </summary>
         /// <param name="spawnerIndex">index of spawner to be used in first spawning.</param>
         /// <returns></returns>
@@ -160,6 +163,7 @@ namespace Assets.Scripts.Enemies
             foreach (Spawner enemySpawn in _enemySpawners)
                 enemySpawn.Clear();
 
+            _isSpawning = false;
         }
         /// <summary>
         /// Enemy was defeated.
